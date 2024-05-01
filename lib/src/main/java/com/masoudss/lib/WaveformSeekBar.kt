@@ -52,6 +52,12 @@ open class WaveformSeekBar @JvmOverloads constructor(
             onProgressChanged?.onProgressChanged(this, progress, false)
         }
 
+    var minProgress: Float = 0F
+        set(value) {
+            field = value
+            invalidate()
+        }
+
     var maxProgress: Float = 100F
         set(value) {
             field = value
@@ -266,6 +272,7 @@ open class WaveformSeekBar @JvmOverloads constructor(
             val barsToDraw = (getAvailableWidth() / totalWaveWidth).toInt()
             val start: Int
             val progressXPosition: Float
+            val minimumProgressXPosition: Float
             if (visibleProgress > 0) {
                 // If visibleProgress is > 0, the bars move instead of the blue colored part
                 step *= visibleProgress / maxProgress
@@ -280,9 +287,11 @@ open class WaveformSeekBar @JvmOverloads constructor(
                 start =
                     (progress * barsForProgress / visibleProgress - (barsForProgress / 2F)).roundToInt() - 1
                 progressXPosition = getAvailableWidth() * 0.5F
+                minimumProgressXPosition = 0F
             } else {
                 start = 0
                 progressXPosition = getAvailableWidth() * progress / maxProgress
+                minimumProgressXPosition = getAvailableWidth() * minProgress / maxProgress
             }
 
             // draw waves
@@ -328,6 +337,10 @@ open class WaveformSeekBar @JvmOverloads constructor(
                             mWavePaint
                         )
                         mWavePaint.shader = progressShader
+                    }
+                    mWaveRect.left < minimumProgressXPosition -> {
+                        mWavePaint.color = waveBackgroundColor
+                        mWavePaint.shader = null
                     }
                     mWaveRect.right <= progressXPosition -> {
                         mWavePaint.color = waveProgressColor
