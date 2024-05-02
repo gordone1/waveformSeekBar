@@ -52,7 +52,7 @@ open class WaveformSeekBar @JvmOverloads constructor(
             onProgressChanged?.onProgressChanged(this, progress, false)
         }
 
-    var minProgress: Float = 0F
+    var minPaintProgress: Float = 0F
         set(value) {
             field = value
             invalidate()
