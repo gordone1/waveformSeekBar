@@ -58,6 +58,12 @@ open class WaveformSeekBar @JvmOverloads constructor(
             invalidate()
         }
 
+    var maxPaintProgress: Float = 0F
+        set(value) {
+            field = value
+            invalidate()
+        }
+
     var maxProgress: Float = 100F
         set(value) {
             field = value
@@ -272,7 +278,9 @@ open class WaveformSeekBar @JvmOverloads constructor(
             val barsToDraw = (getAvailableWidth() / totalWaveWidth).toInt()
             val start: Int
             val progressXPosition: Float
-            val minimumProgressXPosition: Float
+            val minPaintProgressXPosition: Float
+            val maxPaintProgressXPosition: Float
+
             if (visibleProgress > 0) {
                 // If visibleProgress is > 0, the bars move instead of the blue colored part
                 step *= visibleProgress / maxProgress
@@ -287,11 +295,13 @@ open class WaveformSeekBar @JvmOverloads constructor(
                 start =
                     (progress * barsForProgress / visibleProgress - (barsForProgress / 2F)).roundToInt() - 1
                 progressXPosition = getAvailableWidth() * 0.5F
-                minimumProgressXPosition = 0F
+                minPaintProgressXPosition = 0F
+                maxPaintProgressXPosition = 0F
             } else {
                 start = 0
                 progressXPosition = getAvailableWidth() * progress / maxProgress
-                minimumProgressXPosition = getAvailableWidth() * minProgress / maxProgress
+                minPaintProgressXPosition = getAvailableWidth() * minPaintProgress / maxProgress
+                maxPaintProgressXPosition = getAvailableWidth() * maxPaintProgress / maxProgress
             }
 
             // draw waves
@@ -320,7 +330,13 @@ open class WaveformSeekBar @JvmOverloads constructor(
                     // if progress is currently in waveRect, color have to be split up
                     mWaveRect.contains(progressXPosition, mWaveRect.centerY()) -> {
                         mProgressCanvas.setBitmap(progressBitmap)
-                        mWavePaint.color = waveProgressColor
+
+                        if (mWaveRect.left < minPaintProgressXPosition || mWaveRect.right > maxPaintProgressXPosition) {
+                            mWavePaint.color = waveBackgroundColor
+                        } else {
+                            mWavePaint.color = waveProgressColor
+                        }
+
                         mProgressCanvas.drawRect(
                             0F,
                             0F,
@@ -338,7 +354,7 @@ open class WaveformSeekBar @JvmOverloads constructor(
                         )
                         mWavePaint.shader = progressShader
                     }
-                    mWaveRect.left < minimumProgressXPosition -> {
+                    mWaveRect.left < minPaintProgressXPosition || mWaveRect.right > maxPaintProgressXPosition -> {
                         mWavePaint.color = waveBackgroundColor
                         mWavePaint.shader = null
                     }
