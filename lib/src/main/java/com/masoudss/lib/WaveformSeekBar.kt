@@ -197,6 +197,8 @@ open class WaveformSeekBar @JvmOverloads constructor(
             ta.getColor(R.styleable.WaveformSeekBar_wave_progress_color, waveProgressColor)
         progress = ta.getFloat(R.styleable.WaveformSeekBar_wave_progress, progress)
         maxProgress = ta.getFloat(R.styleable.WaveformSeekBar_wave_max_progress, maxProgress)
+        minPaintProgress = ta.getFloat(R.styleable.WaveformSeekBar_wave_min_paint_progress, minPaintProgress)
+        maxPaintProgress = ta.getFloat(R.styleable.WaveformSeekBar_wave_max_paint_progress, maxPaintProgress)
         visibleProgress =
             ta.getFloat(R.styleable.WaveformSeekBar_wave_visible_progress, visibleProgress)
         val gravity = ta.getString(R.styleable.WaveformSeekBar_wave_gravity)?.toInt()
