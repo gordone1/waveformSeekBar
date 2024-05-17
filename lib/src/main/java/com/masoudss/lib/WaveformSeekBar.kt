@@ -312,6 +312,11 @@ open class WaveformSeekBar @JvmOverloads constructor(
             for (i in start until barsToDraw + start + 3) {
                 sampleItemPosition = floor(i * step).roundToInt()
 
+                //
+                //  Use max value of samples on either side of sampleItemPosition instead of just
+                //  the one at sampleItemPosition
+                //
+
                 val lookBehindStart = sampleItemPosition - lookAheadBehind
                 val lookAheadEnd = sampleItemPosition + lookAheadBehind + 1
 
@@ -325,7 +330,10 @@ open class WaveformSeekBar @JvmOverloads constructor(
                     }
                 }
 
-                var waveHeight = (getAvailableHeight() - wavePaddingTop - wavePaddingBottom) * (max.toFloat() / mMaxValue)
+                var waveHeight =
+                    if (mMaxValue != 0)
+                        (getAvailableHeight() - wavePaddingTop - wavePaddingBottom) * (max.toFloat() / mMaxValue)
+                    else 0F
 
                 if (waveHeight < waveMinHeight) waveHeight = waveMinHeight
 
