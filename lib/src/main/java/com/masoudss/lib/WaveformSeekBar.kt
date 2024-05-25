@@ -308,6 +308,39 @@ open class WaveformSeekBar @JvmOverloads constructor(
 
             val lookAheadBehind = (floor(step / 2) - 1).roundToInt()
 
+            var minAmplitude = 256;
+            var maxAmplitude = 0;
+
+            for (i in start until barsToDraw + start + 3) {
+                sampleItemPosition = floor(i * step).roundToInt()
+
+                //
+                //  Use max value of samples on either side of sampleItemPosition instead of just
+                //  the one at sampleItemPosition
+                //
+
+                val lookBehindStart = sampleItemPosition - lookAheadBehind
+                val lookAheadEnd = sampleItemPosition + lookAheadBehind + 1
+
+                var peak = 0
+
+                for (j in lookBehindStart until lookAheadEnd) {
+                    if (j in waveSample.indices) {
+                        if (waveSample[j] > peak) {
+                            peak = waveSample[j]
+                        }
+                    }
+                }
+
+                if (peak < minAmplitude) {
+                    minAmplitude = peak
+                }
+
+                if (peak > maxAmplitude) {
+                    maxAmplitude = peak
+                }
+            }
+
             // draw waves
             for (i in start until barsToDraw + start + 3) {
                 sampleItemPosition = floor(i * step).roundToInt()
@@ -320,20 +353,22 @@ open class WaveformSeekBar @JvmOverloads constructor(
                 val lookBehindStart = sampleItemPosition - lookAheadBehind
                 val lookAheadEnd = sampleItemPosition + lookAheadBehind + 1
 
-                var max = 0
+                var amplitude = 0
 
                 for (j in lookBehindStart until lookAheadEnd) {
                     if (j in waveSample.indices) {
-                        if (waveSample[j] > max) {
-                            max = waveSample[j]
+                        if (waveSample[j] > amplitude) {
+                            amplitude = waveSample[j]
                         }
                     }
                 }
 
                 var waveHeight =
-                    if (mMaxValue != 0)
-                        (getAvailableHeight() - wavePaddingTop - wavePaddingBottom) * (max.toFloat() / mMaxValue)
+                    if (maxAmplitude != 0)
+                        (getAvailableHeight() - wavePaddingTop - wavePaddingBottom) * (amplitude.toFloat() / maxAmplitude)
                     else 0F
+
+//Log.d("waveformSeekBar", "pos = " + sampleItemPosition + ", amplitude = " + amplitude.toFloat() + ", min amplitude = " + minAmplitude + ", max amplitude = " + maxAmplitude + ", space = " + (getAvailableHeight() - wavePaddingTop - wavePaddingBottom) + " => waveHeight = " + waveHeight);
 
                 if (waveHeight < waveMinHeight) waveHeight = waveMinHeight
 
