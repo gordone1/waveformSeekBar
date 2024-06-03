@@ -456,7 +456,7 @@ open class WaveformSeekBar @JvmOverloads constructor(
             }
         }
     }
-
+/*
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (!isEnabled)
             return false
@@ -529,7 +529,7 @@ open class WaveformSeekBar @JvmOverloads constructor(
             maxProgress * event.x / getAvailableWidth()
         }
     }
-
+*/
     override fun performClick(): Boolean {
         super.performClick()
         return true
