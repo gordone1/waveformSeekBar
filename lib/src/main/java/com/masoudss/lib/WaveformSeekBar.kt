@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.*
 import android.net.Uri
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import androidx.annotation.RawRes
@@ -13,7 +12,6 @@ import com.masoudss.lib.utils.Utils
 import com.masoudss.lib.utils.WaveGravity
 import com.masoudss.lib.utils.WaveformOptions
 import java.io.File
-import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
@@ -305,7 +303,7 @@ open class WaveformSeekBar @JvmOverloads constructor(
                 minPaintProgressXPosition = getAvailableWidth() * minPaintProgress / maxProgress
                 maxPaintProgressXPosition = getAvailableWidth() * maxPaintProgress / maxProgress
             }
-
+/*
             val lookAheadBehind = (floor(step / 2) - 1).roundToInt()
 
             var minAmplitude = 256;
@@ -340,16 +338,21 @@ open class WaveformSeekBar @JvmOverloads constructor(
                     maxAmplitude = peak
                 }
             }
-
+*/
             // draw waves
             for (i in start until barsToDraw + start + 3) {
                 sampleItemPosition = floor(i * step).roundToInt()
+
+                var waveHeight =
+                    if (sampleItemPosition in waveSample.indices && mMaxValue != 0)
+                        (getAvailableHeight() - wavePaddingTop - wavePaddingBottom) * (waveSample[sampleItemPosition].toFloat() / mMaxValue)
+                    else 0F
 
                 //
                 //  Use max value of samples on either side of sampleItemPosition instead of just
                 //  the one at sampleItemPosition
                 //
-
+/*
                 val lookBehindStart = sampleItemPosition - lookAheadBehind
                 val lookAheadEnd = sampleItemPosition + lookAheadBehind + 1
 
@@ -368,8 +371,8 @@ open class WaveformSeekBar @JvmOverloads constructor(
                         (getAvailableHeight() - wavePaddingTop - wavePaddingBottom) * (amplitude.toFloat() / maxAmplitude)
                     else 0F
 
-//Log.d("waveformSeekBar", "pos = " + sampleItemPosition + ", amplitude = " + amplitude.toFloat() + ", min amplitude = " + minAmplitude + ", max amplitude = " + maxAmplitude + ", space = " + (getAvailableHeight() - wavePaddingTop - wavePaddingBottom) + " => waveHeight = " + waveHeight);
-
+Log.d("waveformSeekBar", "pos = " + sampleItemPosition + ", amplitude = " + amplitude.toFloat() + ", min amplitude = " + minAmplitude + ", max amplitude = " + maxAmplitude + ", space = " + (getAvailableHeight() - wavePaddingTop - wavePaddingBottom) + " => waveHeight = " + waveHeight);
+*/
                 if (waveHeight < waveMinHeight) waveHeight = waveMinHeight
 
                 val top: Float = when (waveGravity) {
